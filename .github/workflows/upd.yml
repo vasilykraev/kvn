@@ -1,0 +1,37 @@
+name: Update Lite List
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download, decode and filter list
+        env:
+          LIST_URL: ${{ secrets.LIST_URL }}
+        run: |
+          curl -sSfL "$LIST_URL" -o /tmp/list
+
+          {
+              cat /tmp/list
+              printf '='
+          } | base64 -d > lite_filter.txt
+
+      - name: Set timestamp
+        run: echo "TIMESTAMP=$(date -Iseconds)" >> "$GITHUB_ENV"
+
+      - name: Commit changes if any
+        uses: test-room-7/action-update-file@v2
+        with:
+          file-path: lite_filter.txt
+          commit-msg: "Update lite_filter.txt - ${{ env.TIMESTAMP }}"
+          github-token: ${{ secrets.GITHUB_TOKEN }}
