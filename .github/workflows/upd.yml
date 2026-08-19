@@ -24,7 +24,7 @@ jobs:
           {
               cat /tmp/list
               printf '='
-          } | base64 -d > lite_filter.txt
+          } | base64 -d > filtered.txt
 
       - name: Set timestamp
         run: echo "TIMESTAMP=$(date -Iseconds)" >> "$GITHUB_ENV"
@@ -32,6 +32,6 @@ jobs:
       - name: Commit changes if any
         uses: test-room-7/action-update-file@v2
         with:
-          file-path: lite_filter.txt
+          file-path: filtered.txt
           commit-msg: "Update lite_filter.txt - ${{ env.TIMESTAMP }}"
           github-token: ${{ secrets.GITHUB_TOKEN }}
