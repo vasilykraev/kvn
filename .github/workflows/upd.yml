@@ -21,9 +21,7 @@ jobs:
         run: |
           curl -sSfL "$LIST_URL" -o /tmp/list.txt
 
-          list="$(cat /tmp/list.txt)"
-          list+="$(printf '=%.0s' $(seq 1 $(( (4 - ${#list} % 4) % 4 ))))"
-          printf '%s' "$list" | base64 -d > filtered.txt
+          python3 -c 'import base64; s=open("/tmp/list.txt","rb").read().strip(); open("filtered.txt","wb").write(base64.b64decode(s+b"="*(-len(s)%4)))'
 
       - name: Set timestamp
         run: echo "TIMESTAMP=$(date -Iseconds)" >> "$GITHUB_ENV"
