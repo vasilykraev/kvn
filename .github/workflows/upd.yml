@@ -22,8 +22,8 @@ jobs:
           curl -sSfL "$LIST_URL" -o /tmp/list.txt
 
           list="$(cat /tmp/list.txt)"
-          [[ "$list" != *= ]] && list+="="
-          echo -n "$list" | base64 -d > filtered.txt
+          list+="$(printf '=%.0s' $(seq 1 $(( (4 - ${#list} % 4) % 4 ))))"
+          printf '%s' "$list" | base64 -d > filtered.txt
 
       - name: Set timestamp
         run: echo "TIMESTAMP=$(date -Iseconds)" >> "$GITHUB_ENV"
