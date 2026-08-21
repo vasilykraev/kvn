@@ -19,12 +19,11 @@ jobs:
         env:
           LIST_URL: ${{ secrets.LIST_URL }}
         run: |
-          curl -sSfL "$LIST_URL" -o /tmp/list
+          curl -sSfL "$LIST_URL" -o /tmp/list.txt
 
-          {
-              cat /tmp/list
-              printf '='
-          } | base64 -d > filtered.txt
+          list="$(cat /tmp/list.txt)"
+          [[ "$list" != *= ]] && list+="="
+          echo -n "$list" | base64 -d > filtered.txt
 
       - name: Set timestamp
         run: echo "TIMESTAMP=$(date -Iseconds)" >> "$GITHUB_ENV"
